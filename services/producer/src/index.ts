@@ -6,7 +6,7 @@ import { supportTicketRoute } from './routes/support-ticket.js';
 const app: FastifyInstance = Fastify({ logger: { level: env.PRODUCER_LOG_LEVEL } });
 
 export const init = async (): Promise<{ disconnect: () => Promise<void> }> => {
-  const { producer, disconnect } = await bootstrapProducer(env);
+  const { producer, disconnect } = await bootstrapProducer();
   app.log.info({ brokers: env.KAFKA_BROKERS }, '[index] Kafka producer conectado');
 
   app.register(supportTicketRoute, { prefix: '/support-ticket', producer, env });

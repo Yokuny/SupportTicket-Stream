@@ -1,11 +1,10 @@
 import { type EachMessagePayload, Kafka } from 'kafkajs';
+import { env } from '../config/env.js';
 
-import type { DataSource } from 'typeorm';
-import type { Env } from '../config/env.js';
 import { saveSupportTicket } from '../repositories/index.js';
 import { parseSupportTicketEvent } from './support-ticket.processor.js';
 
-export const bootstrapConsumer = async (env: Env, dataSource: DataSource): Promise<{ disconnect: () => Promise<void> }> => {
+export const bootstrapConsumer = async (): Promise<{ disconnect: () => Promise<void> }> => {
   const kafka = new Kafka({
     clientId: env.KAFKA_CLIENT_ID,
     brokers: env.KAFKA_BROKERS.split(','),
@@ -22,14 +21,13 @@ export const bootstrapConsumer = async (env: Env, dataSource: DataSource): Promi
       const result = parseSupportTicketEvent(message.value?.toString());
 
       if (!result.success) {
-        console.error('[consumer] Failed to parse event:', result.error.message);
         return;
       }
 
       const event = result.data;
       console.log({ eventId: event.metadata.eventId, eventType: event.metadata.eventType, topic, partition }, 'Event received');
 
-      await saveSupportTicket(dataSource, {
+      await saveSupportTicket({
         ...event.payload,
         createdAt: new Date(),
         updatedAt: new Date(),

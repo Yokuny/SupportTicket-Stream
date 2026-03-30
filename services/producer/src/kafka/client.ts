@@ -1,7 +1,7 @@
 import { Kafka, type Producer } from 'kafkajs';
-import type { Env } from '../config/env.js';
+import { env } from '../config/env.js';
 
-export const bootstrapProducer = async (env: Env): Promise<{ producer: Producer; disconnect: () => Promise<void> }> => {
+export const bootstrapProducer = async (): Promise<{ producer: Producer; disconnect: () => Promise<void> }> => {
   const kafka = new Kafka({
     clientId: env.KAFKA_CLIENT_ID,
     brokers: env.KAFKA_BROKERS.split(','),
