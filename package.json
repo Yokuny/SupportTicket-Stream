@@ -1,0 +1,21 @@
+{
+  "name": "kafka-stream",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:producer": "pnpm --filter @kafka-stream/producer dev",
+    "dev:consumer": "pnpm --filter @kafka-stream/consumer dev",
+    "build": "pnpm -r build",
+    "infra:up": "docker compose -f infra/docker-compose.yml up -d",
+    "infra:down": "docker compose -f infra/docker-compose.yml down",
+    "topics:create": "node infra/create-topics.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "kafkajs": "^2.2.4"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@kafka-stream/consumer",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file=.env src/main.ts",
+    "build": "tsc",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {
+    "@kafka-stream/shared": "workspace:*",
+    "kafkajs": "^2.2.4",
+    "typeorm": "^0.3.20",
+    "pg": "^8.11.5",
+    "reflect-metadata": "^0.2.2",
+    "uuid": "^9.0.1",
+    "pino": "^9.1.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.6",
+    "@types/uuid": "^9.0.8",
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.5",
+    "tsx": "^4.9.3"
+  }
+}

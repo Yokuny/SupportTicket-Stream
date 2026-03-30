@@ -1,0 +1,24 @@
+{
+  "name": "@kafka-stream/producer",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {
+    "@kafka-stream/shared": "workspace:*",
+    "fastify": "^4.27.0",
+    "@fastify/env": "^4.3.0",
+    "kafkajs": "^2.2.4",
+    "uuid": "^9.0.1",
+    "pino": "^9.1.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8",
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.5",
+    "tsx": "^4.9.3"
+  }
+}
