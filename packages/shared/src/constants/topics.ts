@@ -1,6 +1,6 @@
 export const Topics = {
-  ORDERS_CREATED: 'orders.created',
-  ORDERS_CREATED_DLQ: 'orders.created.dlq',
+  SUPPORT_TICKET_CREATED: 'support-ticket.created',
+  SUPPORT_TICKET_CREATED_DLQ: 'support-ticket.created.dlq',
 } as const;
 
 export type Topic = (typeof Topics)[keyof typeof Topics];
