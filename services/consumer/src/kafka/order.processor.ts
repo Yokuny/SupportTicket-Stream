@@ -1,5 +1,5 @@
-import { OrderCreatedEventSchema, err, ok } from '@kafka-stream/shared';
 import type { OrderCreatedEvent, Result } from '@kafka-stream/shared';
+import { err, OrderCreatedEventSchema, ok } from '@kafka-stream/shared';
 
 export const parseOrderEvent = (raw: string | null | undefined): Result<OrderCreatedEvent> => {
   if (!raw) return err(new Error('Empty message value'));

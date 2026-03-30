@@ -1,2 +1,2 @@
-export { ok, err, isOk, isErr, mapResult, chainResult } from './result.js';
 export { pipe } from './pipe.js';
+export { chainResult, err, isErr, isOk, mapResult, ok } from './result.js';

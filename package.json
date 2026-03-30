@@ -10,7 +10,7 @@
     "infra:down": "docker compose -f infra/docker-compose.yml down",
     "topics:create": "node infra/create-topics.mjs",
     "lint": "biome check .",
-    "format": "biome format --write ."
+    "format": "biome check --write ."
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.9",
