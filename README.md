@@ -9,12 +9,11 @@ A estrutura adere a um padrão de **monorepo** isolado nos seguintes blocos lóg
 * **`packages/shared`**: 
   Funciona como um contrato estrito entre os serviços. Exporta o tipo `KafkaEvent<T>`, além da estrutura funcional `Result<T,E>` para tratamento de erros puramente funcionais e o registro de tópicos do negócio. *Nenhum serviço depende de outro, apenas dependem do `shared`.*
   
-* **`services/producer`**: 
-  Api REST usando *Fastify* rodando na porta `3001`. Recebe solicitações POST na rota `/orders`, valida a requisição, empacota em um evento formal de sistema (através da assinatura construída no *shared*) e **publica o evento** (`orders.created`) de forma idempotente para o Kafka.
-  > A chave de roteamento de particionamento da mensagem do Kafka é o `customerId` extraído do payload, preservando uma garantia de ordem no cluster por cliente.
-  
-* **`services/consumer`**: 
-  Um Worker puro que roda em background sem portas HTTP. Ouve continuamente o tópico `orders.created`, passando seus eventos por um pipeline funcional e salva de maneira final o pedido num banco local (PostgreSQL via TypeORM). Há implementações de *retry logging* (Exponencial) que enviam a mensagem estragada para um outro tópico, a DLQ (`orders.created.dlq`) caso falhe várias vezes.
+* **`services/producer`**:
+  Api REST usando *Fastify* rodando na porta `3001`. Recebe solicitações POST na rota `/support-ticket`, valida a requisição, empacota em um evento formal de sistema (através da assinatura construída no *shared*) e **publica o evento** (`support-ticket.created`) de forma idempotente para o Kafka.
+
+* **`services/consumer`**:
+  Um Worker puro que roda em background sem portas HTTP. Ouve continuamente o tópico `support-ticket.created`, passando seus eventos por um pipeline funcional e salva de maneira final o ticket num banco local (PostgreSQL via TypeORM). Há implementações de *retry logging* (Exponencial) que enviam a mensagem estragada para um outro tópico, a DLQ (`support-ticket.created.dlq`) caso falhe várias vezes.
 
 * **`Infra`** (Docker Compose): 
   O ambiente encapsulado de dependências: *Kafka*, *Zookeeper* (necessário para clusters gerenciarem brokers do Kafka), *PostgreSQL* para o banco de dados final e um painel visual do *Kafka UI* acessível para debugar eventos que passam pelo pipeline.
@@ -62,28 +61,28 @@ pnpm run dev:consumer
 
 ## 🧪 Como testar e ver o que ele faz
 
-Uma vez que toda a sua infraestrutura e ambos os serviços estão online, você pode despachar ordens de compras (Pedidos) e ver como o sistema age de forma interconectada por trás dos panos:
+Uma vez que toda a sua infraestrutura e ambos os serviços estão online, você pode abrir tickets de suporte e ver como o sistema age de forma interconectada por trás dos panos:
 
 **1. Faça uma API Request:**
 Em outro terminal paralelo ou utilizando alguma ferramenta como Postman/Insomnia/cURL, dispare a rota:
 ```bash
-curl -X POST http://localhost:3001/orders \
+curl -X POST http://localhost:3001/support-ticket \
 -H "Content-Type: application/json" \
 -d '{
-  "customerId": "8f8e0b0e-6b99-4c3e-9bf8-9d8e7c6ac510",
-  "items": [
-    { "id": "pc-gamer", "amount": 1, "price": 4500 }
-  ],
-  "totalPrice": 4500
+  "ticketId": "8f8e0b0e-6b99-4c3e-9bf8-9d8e7c6ac510",
+  "userId": "user-123",
+  "currentPage": "/dashboard",
+  "previousPage": "/login",
+  "message": "Não consigo acessar o relatório",
+  "currentError": "403 Forbidden"
 }'
 ```
-*(O `customerId` é fundamental, pois ele atua servindo de Key de partições do Kafka).*
 
 **2. Acompanhe a Viagem do Evento no Console:**
 - **Terminal do Producer**: Você deve conseguir ver a atividade do Fastify validando a requisição e mandando o evento pro ar junto de uma resposta HTTP 201 Created.
-- **Terminal do Consumer**: Assim que mandado pro ar, de forma instantânea o processo worker vai imprimir a captura da transação `orders.created` e processá-la. Caso a transação der erro transacional no banco, você vai conseguir perceber o algoritmo de retry tentando processar o evento multiplas vezes até jogá-lo na DLQ (Dead Letter Queue).
+- **Terminal do Consumer**: Assim que mandado pro ar, de forma instantânea o processo worker vai imprimir a captura da transação `support-ticket.created` e processá-la. Caso a transação der erro transacional no banco, você vai conseguir perceber o algoritmo de retry tentando processar o evento multiplas vezes até jogá-lo na DLQ (Dead Letter Queue).
 
 **3. Teste usando visualizações (Kafka UI & Database):**
 Você pode acompanhar em TEMPO REAL através da Web as publicações e as tabelas:
-- Abra seu navegador no painel [http://localhost:8080](http://localhost:8080) (`Kafka UI`). Vá no cluster mapeado em **Topics** e abra o `orders.created`. Navegue para a tab **Messages** e lá estará o seu evento rastreável listado!
+- Abra seu navegador no painel [http://localhost:8080](http://localhost:8080) (`Kafka UI`). Vá no cluster mapeado em **Topics** e abra o `support-ticket.created`. Navegue para a tab **Messages** e lá estará o seu evento rastreável listado!
 - Você pode se conectar ao BD PostgreSQL no `localhost:5432` com as credenciais configuradas (`kafkastream`:`kafkastream`) usando seu cliente SQL preferido para confirmar se o consumo gerou dados materializados.

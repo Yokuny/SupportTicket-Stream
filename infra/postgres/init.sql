@@ -9,13 +9,13 @@ CREATE TABLE IF NOT EXISTS events (
     UNIQUE(topic, partition, offset)
 );
 
-CREATE TABLE IF NOT EXISTS orders (
-    order_id VARCHAR(255) PRIMARY KEY,
-    customer_id VARCHAR(255) NOT NULL,
-    product_id VARCHAR(255) NOT NULL,
-    quantity INT NOT NULL,
-    amount NUMERIC(10, 2) NOT NULL,
-    status VARCHAR(50) DEFAULT 'pending',
+CREATE TABLE IF NOT EXISTS support_tickets (
+    ticket_id VARCHAR(255) PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL,
+    current_page VARCHAR(500) NOT NULL,
+    previous_page VARCHAR(500) NOT NULL,
+    message TEXT NOT NULL,
+    current_error TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

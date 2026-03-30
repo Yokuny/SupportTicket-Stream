@@ -15,12 +15,12 @@ const createTopics = async () => {
 
   const topics = [
     {
-      topic: 'orders.created',
+      topic: 'support-ticket.created',
       numPartitions: 3,
       replicationFactor: 1,
     },
     {
-      topic: 'orders.created.dlq',
+      topic: 'support-ticket.created.dlq',
       numPartitions: 3,
       replicationFactor: 1,
     },
